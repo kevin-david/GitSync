@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:GitSync/api/manager/storage.dart';
+import 'package:GitSync/api/scheduled_sync_coordinator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -116,6 +117,7 @@ class GitsyncService {
   );
 
   final Set<int> scheduledIndices = {};
+  final ScheduledSyncCompletionQueue _scheduledSyncCompletions = ScheduledSyncCompletionQueue();
   bool isSyncing = false;
 
   static const String _widgetStatusKey = 'forceSyncWidget_status';
@@ -172,7 +174,7 @@ class GitsyncService {
     Workmanager().initialize(callbackDispatcher, isInDebugMode: kDebugMode);
 
     await service.configure(
-      androidConfiguration: AndroidConfiguration(autoStart: true, isForegroundMode: false, onStart: onServiceStart),
+      androidConfiguration: AndroidConfiguration(autoStart: true, acquireWakeLock: false, isForegroundMode: false, onStart: onServiceStart),
       iosConfiguration: IosConfiguration(
         autoStart: true,
         onForeground: onServiceStart,
@@ -189,26 +191,61 @@ class GitsyncService {
   }
 
   Future<void> debouncedSync(int repomanRepoindex, [bool forced = false, bool immediate = false, String? syncMessage, int retryCount = 0]) async {
+    await _scheduleSync(repomanRepoindex, forced, immediate, syncMessage, retryCount);
+  }
+
+  Future<void> runScheduledSync(int repomanRepoindex) async {
+    final result = await _scheduleSync(repomanRepoindex, true, true, null, 0, trackQueuedCompletion: true);
+    final queuedCompletion = result.$2;
+    if (queuedCompletion != null) await queuedCompletion;
+  }
+
+  Future<(bool, Future<void>?)> _scheduleSync(
+    int repomanRepoindex,
+    bool forced,
+    bool immediate,
+    String? syncMessage,
+    int retryCount, {
+    bool trackQueuedCompletion = false,
+  }) async {
     final settingsManager = SettingsManager();
     await settingsManager.reinit(repoIndex: repomanRepoindex);
 
     if (scheduledIndices.contains(repomanRepoindex)) {
       await _displaySyncMessage(settingsManager, s.syncInProgress);
-      return;
+      return (false, trackQueuedCompletion ? _scheduledSyncCompletions.waitFor(repomanRepoindex) : null);
     } else {
       if (isSyncing) {
         scheduledIndices.add(repomanRepoindex);
         Logger.gmLog(type: LogType.Sync, "Sync Scheduled");
         await _displaySyncMessage(settingsManager, s.syncScheduled);
-        return;
+        return (false, trackQueuedCompletion ? _scheduledSyncCompletions.waitFor(repomanRepoindex) : null);
       } else {
         if (immediate) {
           await _sync(repomanRepoindex, forced, syncMessage, retryCount);
-          return;
+          return (true, null);
         }
         debounce(repomanRepoindex.toString(), 500, () => _sync(repomanRepoindex, forced, syncMessage, retryCount));
+        return (true, null);
       }
     }
+  }
+
+  Future<void> _drainScheduledSyncs(Set<int> repoIndices) async {
+    for (final repoIndex in repoIndices) {
+      Logger.gmLog(type: LogType.Sync, "Scheduled Sync Starting");
+      try {
+        await _sync(repoIndex);
+        _scheduledSyncCompletions.complete(repoIndex);
+      } catch (error, stackTrace) {
+        _scheduledSyncCompletions.completeError(repoIndex, error, stackTrace);
+      }
+    }
+  }
+
+  void _cancelScheduledSync(int repoIndex, String reason) {
+    scheduledIndices.remove(repoIndex);
+    _scheduledSyncCompletions.completeError(repoIndex, ScheduledSyncException(reason), StackTrace.current);
   }
 
   Future<void> _displaySyncMessage(SettingsManager? settingsManager, String message) async {
@@ -249,7 +286,7 @@ class GitsyncService {
       final remotesList = await GitManager.listRemotes(repomanRepoindex, 3);
       if (remotesList.isEmpty) {
         Logger.gmLog(type: LogType.Sync, "No remote configured, skipping sync");
-        scheduledIndices.remove(repomanRepoindex);
+        _cancelScheduledSync(repomanRepoindex, 'No remote configured');
         terminal = 'error';
         return;
       }
@@ -259,13 +296,13 @@ class GitsyncService {
           : (await settingsManager.getGitHttpAuthCredentials()).$2.isEmpty) {
         Logger.gmLog(type: LogType.Sync, "Credentials Not Found");
         _displaySyncMessage(null, "Credentials not found");
-        scheduledIndices.remove(repomanRepoindex);
+        _cancelScheduledSync(repomanRepoindex, 'Credentials not found');
         terminal = 'error';
         return;
       }
       if ((await GitManager.getConflicting(repomanRepoindex, 3)).isNotEmpty) {
         _displaySyncMessage(null, s.ongoingMergeConflict);
-        scheduledIndices.remove(repomanRepoindex);
+        _cancelScheduledSync(repomanRepoindex, 'Ongoing merge conflict');
         terminal = 'error';
         return;
       }
@@ -398,10 +435,7 @@ class GitsyncService {
       if (scheduledIndices.isNotEmpty) {
         final toSync = scheduledIndices.toSet();
         scheduledIndices.clear();
-        for (final idx in toSync) {
-          Logger.gmLog(type: LogType.Sync, "Scheduled Sync Starting");
-          debouncedSync(idx);
-        }
+        unawaited(_drainScheduledSyncs(toSync));
       }
     }
   }
