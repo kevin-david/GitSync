@@ -6,6 +6,7 @@ import 'dart:ui';
 import 'package:GitSync/api/manager/auth/github_app_manager.dart';
 import 'package:GitSync/api/manager/settings_manager.dart';
 import 'package:GitSync/api/scheduled_sync_coordinator.dart';
+import 'package:GitSync/api/sync_toast_trigger.dart';
 import 'package:GitSync/ui/component/button_setting.dart';
 import 'package:GitSync/ui/component/custom_showcase.dart';
 import 'package:GitSync/ui/component/group_sync_settings.dart';
@@ -85,6 +86,7 @@ const SET_AS_BACKGROUND = "setAsBackground";
 
 const REPO_INDEX = "repoman_repoIndex";
 const PACKAGE_NAME = "packageName";
+const APPLICATION_LABEL = "applicationLabel";
 const ENABLED_INPUT_METHODS = "enabledInputMethods";
 const COMMIT_MESSAGE = "commitMessage";
 const CONFLICTING_PATHS = "conflictingPaths";
@@ -243,7 +245,7 @@ void callbackDispatcher() async {
             inputData?["repoIndex"] ?? int.tryParse(task.replaceAll(scheduledSyncKey, "")) ?? await repoManager.getInt(StorageKey.repoman_repoIndex);
 
         if (Platform.isIOS) {
-          await gitSyncService.debouncedSync(repoIndex, true, true);
+          await gitSyncService.debouncedSync(repoIndex, true, true, null, 0, const SyncToastTrigger.scheduled());
         } else {
           // WorkManager owns the scoped wake lock while the service isolate
           // runs the Git operation and reports completion.
@@ -697,7 +699,11 @@ void onServiceStart(ServiceInstance service) async {
   service.on(GitsyncService.ACCESSIBILITY_EVENT).listen((event) {
     print(GitsyncService.ACCESSIBILITY_EVENT);
     if (event == null) return;
-    gitSyncService.accessibilityEvent(event[PACKAGE_NAME], event[ENABLED_INPUT_METHODS].toString().split(","));
+    gitSyncService.accessibilityEvent(
+      event[PACKAGE_NAME],
+      event[APPLICATION_LABEL] ?? event[PACKAGE_NAME],
+      event[ENABLED_INPUT_METHODS].toString().split(","),
+    );
   });
 
   service.on(GitsyncService.FORCE_SYNC).listen((event) async {

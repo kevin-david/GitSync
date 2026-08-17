@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:GitSync/api/manager/storage.dart';
 import 'package:GitSync/api/scheduled_sync_coordinator.dart';
+import 'package:GitSync/api/sync_toast_trigger.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -118,6 +119,7 @@ class GitsyncService {
 
   final Set<int> scheduledIndices = {};
   final ScheduledSyncCompletionQueue _scheduledSyncCompletions = ScheduledSyncCompletionQueue();
+  final Map<int, SyncToastTrigger> _queuedSyncToastTriggers = {};
   bool isSyncing = false;
 
   static const String _widgetStatusKey = 'forceSyncWidget_status';
@@ -190,12 +192,27 @@ class GitsyncService {
     s = ServiceStrings.fromMap(stringMap);
   }
 
-  Future<void> debouncedSync(int repomanRepoindex, [bool forced = false, bool immediate = false, String? syncMessage, int retryCount = 0]) async {
-    await _scheduleSync(repomanRepoindex, forced, immediate, syncMessage, retryCount);
+  Future<void> debouncedSync(
+    int repomanRepoindex, [
+    bool forced = false,
+    bool immediate = false,
+    String? syncMessage,
+    int retryCount = 0,
+    SyncToastTrigger? toastTrigger,
+  ]) async {
+    await _scheduleSync(repomanRepoindex, forced, immediate, syncMessage, retryCount, toastTrigger: toastTrigger);
   }
 
   Future<void> runScheduledSync(int repomanRepoindex) async {
-    final result = await _scheduleSync(repomanRepoindex, true, true, null, 0, trackQueuedCompletion: true);
+    final result = await _scheduleSync(
+      repomanRepoindex,
+      true,
+      true,
+      null,
+      0,
+      toastTrigger: const SyncToastTrigger.scheduled(),
+      trackQueuedCompletion: true,
+    );
     final queuedCompletion = result.$2;
     if (queuedCompletion != null) await queuedCompletion;
   }
@@ -206,26 +223,32 @@ class GitsyncService {
     bool immediate,
     String? syncMessage,
     int retryCount, {
+    SyncToastTrigger? toastTrigger,
     bool trackQueuedCompletion = false,
   }) async {
     final settingsManager = SettingsManager();
     await settingsManager.reinit(repoIndex: repomanRepoindex);
 
     if (scheduledIndices.contains(repomanRepoindex)) {
-      await _displaySyncMessage(settingsManager, s.syncInProgress);
+      if (toastTrigger != null) _queuedSyncToastTriggers.putIfAbsent(repomanRepoindex, () => toastTrigger);
+      await _displaySyncMessage(settingsManager, toastTrigger?.message(SyncToastStatus.queued) ?? s.syncInProgress);
       return (false, trackQueuedCompletion ? _scheduledSyncCompletions.waitFor(repomanRepoindex) : null);
     } else {
       if (isSyncing) {
         scheduledIndices.add(repomanRepoindex);
+        if (toastTrigger != null) _queuedSyncToastTriggers.putIfAbsent(repomanRepoindex, () => toastTrigger);
         Logger.gmLog(type: LogType.Sync, "Sync Scheduled");
-        await _displaySyncMessage(settingsManager, s.syncScheduled);
+        await _displaySyncMessage(settingsManager, toastTrigger?.message(SyncToastStatus.queued) ?? s.syncScheduled);
         return (false, trackQueuedCompletion ? _scheduledSyncCompletions.waitFor(repomanRepoindex) : null);
       } else {
+        if (toastTrigger != null) {
+          await _displaySyncMessage(settingsManager, toastTrigger.message(SyncToastStatus.syncing));
+        }
         if (immediate) {
-          await _sync(repomanRepoindex, forced, syncMessage, retryCount);
+          await _sync(repomanRepoindex, forced, syncMessage, retryCount, toastTrigger);
           return (true, null);
         }
-        debounce(repomanRepoindex.toString(), 500, () => _sync(repomanRepoindex, forced, syncMessage, retryCount));
+        debounce(repomanRepoindex.toString(), 500, () => _sync(repomanRepoindex, forced, syncMessage, retryCount, toastTrigger));
         return (true, null);
       }
     }
@@ -235,7 +258,7 @@ class GitsyncService {
     for (final repoIndex in repoIndices) {
       Logger.gmLog(type: LogType.Sync, "Scheduled Sync Starting");
       try {
-        await _sync(repoIndex);
+        await _sync(repoIndex, false, null, 0, _queuedSyncToastTriggers.remove(repoIndex));
         _scheduledSyncCompletions.complete(repoIndex);
       } catch (error, stackTrace) {
         _scheduledSyncCompletions.completeError(repoIndex, error, stackTrace);
@@ -245,6 +268,7 @@ class GitsyncService {
 
   void _cancelScheduledSync(int repoIndex, String reason) {
     scheduledIndices.remove(repoIndex);
+    _queuedSyncToastTriggers.remove(repoIndex);
     _scheduledSyncCompletions.completeError(repoIndex, ScheduledSyncException(reason), StackTrace.current);
   }
 
@@ -268,7 +292,7 @@ class GitsyncService {
     }
   }
 
-  Future<void> _sync(int repomanRepoindex, [bool forced = false, String? syncMessage, int retryCount = 0]) async {
+  Future<void> _sync(int repomanRepoindex, [bool forced = false, String? syncMessage, int retryCount = 0, SyncToastTrigger? toastTrigger]) async {
     _syncGeneration++;
     final int myGen = _syncGeneration;
     String terminal = 'success';
@@ -307,7 +331,7 @@ class GitsyncService {
         return;
       }
 
-      if (forced) {
+      if (forced && toastTrigger == null) {
         await _displaySyncMessage(settingsManager, s.detectingChanges);
       }
       Logger.gmLog(type: LogType.Sync, "Start Sync $repomanRepoindex");
@@ -409,12 +433,18 @@ class GitsyncService {
         Logger.gmLog(type: LogType.Sync, "Sync failed");
       } else if (pushResult == true || pullResult == true) {
         await GitManager.getRecentCommits(repoIndex: repomanRepoindex);
-        await _displaySyncMessage(settingsManager, s.syncComplete);
+        await _displaySyncMessage(
+          settingsManager,
+          toastTrigger?.contextualizeResult == true ? toastTrigger!.message(SyncToastStatus.synced) : s.syncComplete,
+        );
         Logger.dismissError(null);
         Logger.gmLog(type: LogType.Sync, "Sync Complete!");
       } else {
         if (forced) {
-          await _displaySyncMessage(settingsManager, s.syncNotRequired);
+          await _displaySyncMessage(
+            settingsManager,
+            toastTrigger?.contextualizeResult == true ? toastTrigger!.message(SyncToastStatus.noChanges) : s.syncNotRequired,
+          );
         }
         Logger.dismissError(null);
         Logger.gmLog(type: LogType.Sync, "Sync Complete!");
@@ -491,8 +521,9 @@ class GitsyncService {
 
   String lastOpenPackageName = conflictSeparator;
   String lastOpenPackageNameExcludingInputs = conflictSeparator;
+  String lastOpenApplicationLabelExcludingInputs = conflictSeparator;
 
-  void accessibilityEvent(String packageName, List<String> enabledInputMethods) async {
+  void accessibilityEvent(String packageName, String applicationLabel, List<String> enabledInputMethods) async {
     enabledInputMethods = [...enabledInputMethods];
     final repoNamesLength = (await repoManager.getStringList(StorageKey.repoman_repoNames)).length;
     for (var index = 0; index < repoNamesLength; index++) {
@@ -508,9 +539,9 @@ class GitsyncService {
       if (packageNames.contains(lastOpenPackageNameExcludingInputs) &&
           !packageNames.contains(packageName) &&
           !enabledInputMethods.contains(packageName)) {
-        Logger.gmLog(type: LogType.AccessibilityService, "Application Closed $packageName $index");
+        Logger.gmLog(type: LogType.AccessibilityService, "Application Closed $lastOpenPackageNameExcludingInputs $index");
         if (syncClosed) {
-          debouncedSync(index);
+          debouncedSync(index, false, false, null, 0, SyncToastTrigger.appClosed(lastOpenApplicationLabelExcludingInputs));
         }
       }
 
@@ -519,7 +550,7 @@ class GitsyncService {
           !enabledInputMethods.contains(packageName)) {
         Logger.gmLog(type: LogType.AccessibilityService, "Application Opened $packageName $index");
         if (syncOpened) {
-          debouncedSync(index);
+          debouncedSync(index, false, false, null, 0, SyncToastTrigger.appOpened(applicationLabel));
         }
       }
     }
@@ -527,6 +558,7 @@ class GitsyncService {
     lastOpenPackageName = packageName;
     if (!enabledInputMethods.contains(packageName)) {
       lastOpenPackageNameExcludingInputs = packageName;
+      lastOpenApplicationLabelExcludingInputs = applicationLabel;
     }
   }
 }
