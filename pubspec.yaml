@@ -33,9 +33,9 @@ dependencies:
   http: 1.6.0
   flutter_background_service:
     git:
-      url: https://github.com/ViscousPot/flutter_background_service_with_intents
+      url: https://github.com/kevin-david/flutter_background_service_with_intents
       path: packages/flutter_background_service
-      ref: fe783b40c0cba7331dda5a2e4987e1c739d0dbf9
+      ref: 4c18c713d3bacba5be2d8433b01866948249e0b0
   flutter_local_notifications: ^18.0.1
   fluttertoast: ^8.2.12
   permission_handler: ^11.4.0
@@ -83,16 +83,19 @@ dependencies:
 dependency_overrides:
   flutter_background_service_platform_interface:
     git:
-      url: https://github.com/ViscousPot/flutter_background_service_with_intents
+      url: https://github.com/kevin-david/flutter_background_service_with_intents
       path: packages/flutter_background_service_platform_interface
+      ref: 4c18c713d3bacba5be2d8433b01866948249e0b0
   flutter_background_service_android:
     git:
-      url: https://github.com/ViscousPot/flutter_background_service_with_intents
+      url: https://github.com/kevin-david/flutter_background_service_with_intents
       path: packages/flutter_background_service_android
+      ref: 4c18c713d3bacba5be2d8433b01866948249e0b0
   flutter_background_service_ios:
     git:
-      url: https://github.com/ViscousPot/flutter_background_service_with_intents
+      url: https://github.com/kevin-david/flutter_background_service_with_intents
       path: packages/flutter_background_service_ios
+      ref: 4c18c713d3bacba5be2d8433b01866948249e0b0
   mmap2_flutter:
     git:
       url: https://github.com/ViscousPot/mmap-flutter.git

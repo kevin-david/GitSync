@@ -258,36 +258,36 @@ packages:
     dependency: "direct main"
     description:
       path: "packages/flutter_background_service"
-      ref: fe783b40c0cba7331dda5a2e4987e1c739d0dbf9
-      resolved-ref: fe783b40c0cba7331dda5a2e4987e1c739d0dbf9
-      url: "https://github.com/ViscousPot/flutter_background_service_with_intents"
+      ref: "4c18c713d3bacba5be2d8433b01866948249e0b0"
+      resolved-ref: "4c18c713d3bacba5be2d8433b01866948249e0b0"
+      url: "https://github.com/kevin-david/flutter_background_service_with_intents"
     source: git
     version: "5.1.0"
   flutter_background_service_android:
     dependency: "direct overridden"
     description:
       path: "packages/flutter_background_service_android"
-      ref: HEAD
-      resolved-ref: fe783b40c0cba7331dda5a2e4987e1c739d0dbf9
-      url: "https://github.com/ViscousPot/flutter_background_service_with_intents"
+      ref: "4c18c713d3bacba5be2d8433b01866948249e0b0"
+      resolved-ref: "4c18c713d3bacba5be2d8433b01866948249e0b0"
+      url: "https://github.com/kevin-david/flutter_background_service_with_intents"
     source: git
     version: "6.3.0"
   flutter_background_service_ios:
     dependency: "direct overridden"
     description:
       path: "packages/flutter_background_service_ios"
-      ref: HEAD
-      resolved-ref: fe783b40c0cba7331dda5a2e4987e1c739d0dbf9
-      url: "https://github.com/ViscousPot/flutter_background_service_with_intents"
+      ref: "4c18c713d3bacba5be2d8433b01866948249e0b0"
+      resolved-ref: "4c18c713d3bacba5be2d8433b01866948249e0b0"
+      url: "https://github.com/kevin-david/flutter_background_service_with_intents"
     source: git
     version: "5.0.3"
   flutter_background_service_platform_interface:
     dependency: "direct overridden"
     description:
       path: "packages/flutter_background_service_platform_interface"
-      ref: HEAD
-      resolved-ref: fe783b40c0cba7331dda5a2e4987e1c739d0dbf9
-      url: "https://github.com/ViscousPot/flutter_background_service_with_intents"
+      ref: "4c18c713d3bacba5be2d8433b01866948249e0b0"
+      resolved-ref: "4c18c713d3bacba5be2d8433b01866948249e0b0"
+      url: "https://github.com/kevin-david/flutter_background_service_with_intents"
     source: git
     version: "5.1.2"
   flutter_driver:
