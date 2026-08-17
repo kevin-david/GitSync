@@ -12,11 +12,14 @@ use std::{
     path::{Path, PathBuf},
     sync::{
         atomic::{AtomicBool, AtomicI32, AtomicU64, Ordering},
-        Arc, Mutex,
+        Arc, Mutex, Once,
     },
     time::Instant,
 };
 use uuid::Uuid;
+
+const NETWORK_TIMEOUT_MS: i32 = 30_000;
+static NETWORK_TIMEOUT_INIT: Once = Once::new();
 
 pub struct Commit {
     pub timestamp: i64,
@@ -710,6 +713,11 @@ pub fn init(homepath: Option<String>) {
     unsafe {
         git2::opts::set_verify_owner_validation(false).unwrap();
     }
+
+    NETWORK_TIMEOUT_INIT.call_once(|| unsafe {
+        git2::opts::set_server_connect_timeout_in_milliseconds(NETWORK_TIMEOUT_MS).unwrap();
+        git2::opts::set_server_timeout_in_milliseconds(NETWORK_TIMEOUT_MS).unwrap();
+    });
 
     if let Ok(mut config) = git2::Config::open_default() {
         let _ = config.set_str("safe.directory", "*");
@@ -2968,6 +2976,7 @@ pub async fn get_recommended_action(
 ) -> Result<Option<i32>, git2::Error> {
     let log_callback = Arc::new(log);
     let repo = swl!(git2::Repository::open(path_string))?;
+    configure_network_timeouts(&repo);
 
     if repo.head().is_err() {
         _log(
@@ -5193,4 +5202,25 @@ pub async fn squash_commits(
     );
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn init_bounds_server_connection_and_io_waits() {
+        init(None);
+
+        unsafe {
+            assert_eq!(
+                git2::opts::get_server_connect_timeout_in_milliseconds().unwrap(),
+                30_000
+            );
+            assert_eq!(
+                git2::opts::get_server_timeout_in_milliseconds().unwrap(),
+                30_000
+            );
+        }
+    }
 }
