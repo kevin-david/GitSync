@@ -1940,7 +1940,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
                   style: ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
                   constraints: BoxConstraints(),
                   onPressed: () => _restorableGlobalSettings.present({}),
-                  icon: FaIcon(FontAwesomeIcons.gear, color: colours.tertiaryDark, size: spaceMD + 7),
+                  icon: FaIcon(FontAwesomeIcons.gear, color: colours.tertiaryDark, size: spaceMD + 7, semanticLabel: t.globalSettings),
                 ),
               ),
               SizedBox(width: spaceSM),

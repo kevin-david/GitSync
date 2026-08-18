@@ -5,7 +5,7 @@ import '../../../constant/dimens.dart';
 import '../../../ui/dialog/base_alert_dialog.dart';
 import 'package:GitSync/global.dart';
 
-Future<void> showDialog(BuildContext context, String issueUrl) {
+Future<void> showDialog(BuildContext context, String issueUrl, {String? title, String? message}) {
   return mat.showDialog(
     context: context,
     barrierDismissible: false,
@@ -13,7 +13,7 @@ Future<void> showDialog(BuildContext context, String issueUrl) {
       title: SizedBox(
         width: MediaQuery.of(context).size.width,
         child: Text(
-          t.issueReportSuccessTitle,
+          title ?? t.issueReportSuccessTitle,
           style: TextStyle(color: colours.primaryLight, fontSize: textXL, fontWeight: FontWeight.bold),
         ),
       ),
@@ -21,7 +21,7 @@ Future<void> showDialog(BuildContext context, String issueUrl) {
         child: ListBody(
           children: [
             Text(
-              t.issueReportSuccessMsg,
+              message ?? t.issueReportSuccessMsg,
               style: TextStyle(color: colours.primaryLight, fontWeight: FontWeight.bold, fontSize: textSM),
             ),
           ],

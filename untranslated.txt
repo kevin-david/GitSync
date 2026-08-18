@@ -1,1 +1,91 @@
-{}
+{
+  "ar": [
+    "issueDuplicateTitle",
+    "issueDuplicateMsg",
+    "viewIssue",
+    "sendMessage",
+    "issueCommentSuccessTitle",
+    "issueCommentSuccessMsg",
+    "issueCommentFailedMsg"
+  ],
+
+  "de": [
+    "issueDuplicateTitle",
+    "issueDuplicateMsg",
+    "viewIssue",
+    "sendMessage",
+    "issueCommentSuccessTitle",
+    "issueCommentSuccessMsg",
+    "issueCommentFailedMsg"
+  ],
+
+  "es": [
+    "issueDuplicateTitle",
+    "issueDuplicateMsg",
+    "viewIssue",
+    "sendMessage",
+    "issueCommentSuccessTitle",
+    "issueCommentSuccessMsg",
+    "issueCommentFailedMsg"
+  ],
+
+  "fr": [
+    "issueDuplicateTitle",
+    "issueDuplicateMsg",
+    "viewIssue",
+    "sendMessage",
+    "issueCommentSuccessTitle",
+    "issueCommentSuccessMsg",
+    "issueCommentFailedMsg"
+  ],
+
+  "ja": [
+    "issueDuplicateTitle",
+    "issueDuplicateMsg",
+    "viewIssue",
+    "sendMessage",
+    "issueCommentSuccessTitle",
+    "issueCommentSuccessMsg",
+    "issueCommentFailedMsg"
+  ],
+
+  "pt": [
+    "issueDuplicateTitle",
+    "issueDuplicateMsg",
+    "viewIssue",
+    "sendMessage",
+    "issueCommentSuccessTitle",
+    "issueCommentSuccessMsg",
+    "issueCommentFailedMsg"
+  ],
+
+  "ru": [
+    "issueDuplicateTitle",
+    "issueDuplicateMsg",
+    "viewIssue",
+    "sendMessage",
+    "issueCommentSuccessTitle",
+    "issueCommentSuccessMsg",
+    "issueCommentFailedMsg"
+  ],
+
+  "zh": [
+    "issueDuplicateTitle",
+    "issueDuplicateMsg",
+    "viewIssue",
+    "sendMessage",
+    "issueCommentSuccessTitle",
+    "issueCommentSuccessMsg",
+    "issueCommentFailedMsg"
+  ],
+
+  "zh_Hant": [
+    "issueDuplicateTitle",
+    "issueDuplicateMsg",
+    "viewIssue",
+    "sendMessage",
+    "issueCommentSuccessTitle",
+    "issueCommentSuccessMsg",
+    "issueCommentFailedMsg"
+  ]
+}
