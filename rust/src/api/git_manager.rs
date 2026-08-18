@@ -4407,7 +4407,9 @@ pub async fn init_repository(
         LogType::InitRepo,
         "Initialising repository".to_string(),
     );
-    Repository::init(Path::new(path_string))?;
+    let mut opts = git2::RepositoryInitOptions::new();
+    opts.initial_head("main");
+    Repository::init_opts(Path::new(path_string), &opts)?;
     Ok(())
 }
 
