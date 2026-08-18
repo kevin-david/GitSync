@@ -181,7 +181,7 @@ Future<void> backgroundCallback(Uri? data) async {
       if (Platform.isIOS) {
         await gitSyncService.debouncedSync(repoIndex, true, true);
       } else {
-        FlutterBackgroundService().invoke(GitsyncService.FORCE_SYNC, {REPO_INDEX: "$repoIndex"});
+        await gitSyncService.debouncedSync(repoIndex, true, true, null);
       }
       return;
     }
@@ -198,7 +198,7 @@ Future<void> backgroundCallback(Uri? data) async {
       if (Platform.isIOS) {
         await gitSyncService.debouncedSync(repoIndex, true, true);
       } else {
-        FlutterBackgroundService().invoke(GitsyncService.FORCE_SYNC, {REPO_INDEX: "$repoIndex"});
+        await gitSyncService.debouncedSync(repoIndex, true, true, null);
       }
       return;
     }
