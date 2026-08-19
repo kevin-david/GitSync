@@ -10,8 +10,13 @@ struct SyncNowIntent: AppIntent {
     static var isDiscoverable: Bool = true
 
     func perform() async throws -> some IntentResult {
+        let repoIndex = UserDefaults(suiteName: "group.ForceSyncWidget")?.integer(forKey: "flutter.repoman_shortcutSyncIndex") ?? -1
+        let urlString = repoIndex >= 0
+            ? "gitsync://sync-now?homeWidget&index=\(repoIndex)"
+            : "gitsync://sync-now?homeWidget"
+
         let backgroundIntent = BackgroundIntent(
-            url: URL(string: "gitsync://sync-now?homeWidget"),
+            url: URL(string: urlString),
             appGroup: "group.ForceSyncWidget"
         )
         try await backgroundIntent.perform()
