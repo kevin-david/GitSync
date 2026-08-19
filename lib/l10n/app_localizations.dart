@@ -3026,6 +3026,18 @@ abstract class AppLocalizations {
   /// **'View the full git log history'**
   String get viewGitLogDescription;
 
+  /// No description provided for @openInTextastic.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in Textastic'**
+  String get openInTextastic;
+
+  /// No description provided for @openInTextasticDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Open file in Textastic app'**
+  String get openInTextasticDescription;
+
   /// No description provided for @ignoreUntrack.
   ///
   /// In en, this message translates to:

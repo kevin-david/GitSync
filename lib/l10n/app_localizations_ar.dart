@@ -1468,6 +1468,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get viewGitLogDescription => 'عرض سجل Git الكامل';
 
   @override
+  String get openInTextastic => 'Open in Textastic';
+
+  @override
+  String get openInTextasticDescription => 'Open file in Textastic app';
+
+  @override
   String get ignoreUntrack => '.gitignore + إلغاء تتبع';
 
   @override

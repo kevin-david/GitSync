@@ -1467,6 +1467,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get viewGitLogDescription => '查看完整的 git 日志历史';
 
   @override
+  String get openInTextastic => 'Open in Textastic';
+
+  @override
+  String get openInTextasticDescription => 'Open file in Textastic app';
+
+  @override
   String get ignoreUntrack => '.gitignore + 取消追踪';
 
   @override

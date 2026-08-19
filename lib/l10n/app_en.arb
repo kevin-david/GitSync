@@ -556,6 +556,8 @@
     "openFileDescription": "Preview/edit file contents",
     "viewGitLog": "view git log",
     "viewGitLogDescription": "View the full git log history",
+    "openInTextastic": "Open in Textastic",
+    "openInTextasticDescription": "Open file in Textastic app",
     "ignoreUntrack": ".gitignore + Untrack",
     "ignoreUntrackDescription": "Add files to .gitignore and untrack",
     "excludeUntrack": ".git/info/exclude + Untrack",

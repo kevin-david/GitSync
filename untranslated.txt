@@ -1,5 +1,7 @@
 {
   "ar": [
+    "openInTextastic",
+    "openInTextasticDescription",
     "issueDuplicateTitle",
     "issueDuplicateMsg",
     "viewIssue",
@@ -10,6 +12,8 @@
   ],
 
   "de": [
+    "openInTextastic",
+    "openInTextasticDescription",
     "issueDuplicateTitle",
     "issueDuplicateMsg",
     "viewIssue",
@@ -20,6 +24,8 @@
   ],
 
   "es": [
+    "openInTextastic",
+    "openInTextasticDescription",
     "issueDuplicateTitle",
     "issueDuplicateMsg",
     "viewIssue",
@@ -30,6 +36,8 @@
   ],
 
   "fr": [
+    "openInTextastic",
+    "openInTextasticDescription",
     "issueDuplicateTitle",
     "issueDuplicateMsg",
     "viewIssue",
@@ -40,6 +48,8 @@
   ],
 
   "ja": [
+    "openInTextastic",
+    "openInTextasticDescription",
     "issueDuplicateTitle",
     "issueDuplicateMsg",
     "viewIssue",
@@ -50,6 +60,8 @@
   ],
 
   "pt": [
+    "openInTextastic",
+    "openInTextasticDescription",
     "issueDuplicateTitle",
     "issueDuplicateMsg",
     "viewIssue",
@@ -60,6 +72,8 @@
   ],
 
   "ru": [
+    "openInTextastic",
+    "openInTextasticDescription",
     "issueDuplicateTitle",
     "issueDuplicateMsg",
     "viewIssue",
@@ -70,6 +84,8 @@
   ],
 
   "zh": [
+    "openInTextastic",
+    "openInTextasticDescription",
     "issueDuplicateTitle",
     "issueDuplicateMsg",
     "viewIssue",
@@ -80,6 +96,8 @@
   ],
 
   "zh_Hant": [
+    "openInTextastic",
+    "openInTextasticDescription",
     "issueDuplicateTitle",
     "issueDuplicateMsg",
     "viewIssue",

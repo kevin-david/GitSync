@@ -184,6 +184,7 @@
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>shortcuts</string>
+		<string>textastic</string>
 	</array>
 </dict>
 </plist>

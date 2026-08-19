@@ -1481,6 +1481,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get viewGitLogDescription => 'Ver o histórico completo do git log';
 
   @override
+  String get openInTextastic => 'Open in Textastic';
+
+  @override
+  String get openInTextasticDescription => 'Open file in Textastic app';
+
+  @override
   String get ignoreUntrack => '.gitignore + Remover Rastreamento';
 
   @override

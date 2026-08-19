@@ -1473,6 +1473,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get viewGitLogDescription => 'Gitの完全なログ履歴を表示';
 
   @override
+  String get openInTextastic => 'Open in Textastic';
+
+  @override
+  String get openInTextasticDescription => 'Open file in Textastic app';
+
+  @override
   String get ignoreUntrack => '.gitignore + 追跡解除';
 
   @override
