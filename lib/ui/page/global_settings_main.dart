@@ -652,7 +652,11 @@ class _GlobalSettingsMain extends ConsumerState<GlobalSettingsMain> with Widgets
                         iconColor: colours.primaryDark,
                         buttonColor: colours.tertiaryWarning,
                         onPressed: () async {
-                          Logger.logError(LogType.Sync, 'uncommitted changes exist in index (at line 1291)', StackTrace.current);
+                          Logger.logError(
+                            LogType.Sync,
+                            '$maestroE2eErrorMarker uncommitted changes exist in index (at line 1291)',
+                            StackTrace.current,
+                          );
                           await Logger.dismissError(context);
                         },
                       ),

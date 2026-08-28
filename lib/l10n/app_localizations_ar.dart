@@ -1468,6 +1468,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get viewGitLogDescription => 'عرض سجل Git الكامل';
 
   @override
+  String get openInTextastic => 'Open in Textastic';
+
+  @override
+  String get openInTextasticDescription => 'Open file in Textastic app';
+
+  @override
   String get ignoreUntrack => '.gitignore + إلغاء تتبع';
 
   @override
@@ -2036,6 +2042,29 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get trackIssue => 'تتبع المشكلة والرد';
+
+  @override
+  String get issueDuplicateTitle => 'Already Reported';
+
+  @override
+  String get issueDuplicateMsg =>
+      'This bug has already been reported and is being tracked in an open issue. \n\nOpen the issue to follow progress, or send your report as a message there so it reaches us without creating a duplicate.';
+
+  @override
+  String get viewIssue => 'View Issue';
+
+  @override
+  String get sendMessage => 'Send As Message';
+
+  @override
+  String get issueCommentSuccessTitle => 'Message Sent';
+
+  @override
+  String get issueCommentSuccessMsg =>
+      'Your report has been added to the existing issue. Bookmark this page to track progress and respond to messages. \n\nIssues with no activity for 7 days are automatically closed.';
+
+  @override
+  String get issueCommentFailedMsg => 'Your message couldn’t be sent. Please check your connection and try again.';
 
   @override
   String get createNewRepository => 'إنشاء مستودع جديد';

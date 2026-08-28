@@ -3026,6 +3026,18 @@ abstract class AppLocalizations {
   /// **'View the full git log history'**
   String get viewGitLogDescription;
 
+  /// No description provided for @openInTextastic.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in Textastic'**
+  String get openInTextastic;
+
+  /// No description provided for @openInTextasticDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Open file in Textastic app'**
+  String get openInTextasticDescription;
+
   /// No description provided for @ignoreUntrack.
   ///
   /// In en, this message translates to:
@@ -4165,6 +4177,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Track Issue & Respond to Messages'**
   String get trackIssue;
+
+  /// No description provided for @issueDuplicateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Already Reported'**
+  String get issueDuplicateTitle;
+
+  /// No description provided for @issueDuplicateMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'This bug has already been reported and is being tracked in an open issue. \n\nOpen the issue to follow progress, or send your report as a message there so it reaches us without creating a duplicate.'**
+  String get issueDuplicateMsg;
+
+  /// No description provided for @viewIssue.
+  ///
+  /// In en, this message translates to:
+  /// **'View Issue'**
+  String get viewIssue;
+
+  /// No description provided for @sendMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Send As Message'**
+  String get sendMessage;
+
+  /// No description provided for @issueCommentSuccessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Message Sent'**
+  String get issueCommentSuccessTitle;
+
+  /// No description provided for @issueCommentSuccessMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Your report has been added to the existing issue. Bookmark this page to track progress and respond to messages. \n\nIssues with no activity for 7 days are automatically closed.'**
+  String get issueCommentSuccessMsg;
+
+  /// No description provided for @issueCommentFailedMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Your message couldn’t be sent. Please check your connection and try again.'**
+  String get issueCommentFailedMsg;
 
   /// No description provided for @createNewRepository.
   ///

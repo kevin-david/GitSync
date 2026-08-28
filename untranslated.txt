@@ -1,1 +1,109 @@
-{}
+{
+  "ar": [
+    "openInTextastic",
+    "openInTextasticDescription",
+    "issueDuplicateTitle",
+    "issueDuplicateMsg",
+    "viewIssue",
+    "sendMessage",
+    "issueCommentSuccessTitle",
+    "issueCommentSuccessMsg",
+    "issueCommentFailedMsg"
+  ],
+
+  "de": [
+    "openInTextastic",
+    "openInTextasticDescription",
+    "issueDuplicateTitle",
+    "issueDuplicateMsg",
+    "viewIssue",
+    "sendMessage",
+    "issueCommentSuccessTitle",
+    "issueCommentSuccessMsg",
+    "issueCommentFailedMsg"
+  ],
+
+  "es": [
+    "openInTextastic",
+    "openInTextasticDescription",
+    "issueDuplicateTitle",
+    "issueDuplicateMsg",
+    "viewIssue",
+    "sendMessage",
+    "issueCommentSuccessTitle",
+    "issueCommentSuccessMsg",
+    "issueCommentFailedMsg"
+  ],
+
+  "fr": [
+    "openInTextastic",
+    "openInTextasticDescription",
+    "issueDuplicateTitle",
+    "issueDuplicateMsg",
+    "viewIssue",
+    "sendMessage",
+    "issueCommentSuccessTitle",
+    "issueCommentSuccessMsg",
+    "issueCommentFailedMsg"
+  ],
+
+  "ja": [
+    "openInTextastic",
+    "openInTextasticDescription",
+    "issueDuplicateTitle",
+    "issueDuplicateMsg",
+    "viewIssue",
+    "sendMessage",
+    "issueCommentSuccessTitle",
+    "issueCommentSuccessMsg",
+    "issueCommentFailedMsg"
+  ],
+
+  "pt": [
+    "openInTextastic",
+    "openInTextasticDescription",
+    "issueDuplicateTitle",
+    "issueDuplicateMsg",
+    "viewIssue",
+    "sendMessage",
+    "issueCommentSuccessTitle",
+    "issueCommentSuccessMsg",
+    "issueCommentFailedMsg"
+  ],
+
+  "ru": [
+    "openInTextastic",
+    "openInTextasticDescription",
+    "issueDuplicateTitle",
+    "issueDuplicateMsg",
+    "viewIssue",
+    "sendMessage",
+    "issueCommentSuccessTitle",
+    "issueCommentSuccessMsg",
+    "issueCommentFailedMsg"
+  ],
+
+  "zh": [
+    "openInTextastic",
+    "openInTextasticDescription",
+    "issueDuplicateTitle",
+    "issueDuplicateMsg",
+    "viewIssue",
+    "sendMessage",
+    "issueCommentSuccessTitle",
+    "issueCommentSuccessMsg",
+    "issueCommentFailedMsg"
+  ],
+
+  "zh_Hant": [
+    "openInTextastic",
+    "openInTextasticDescription",
+    "issueDuplicateTitle",
+    "issueDuplicateMsg",
+    "viewIssue",
+    "sendMessage",
+    "issueCommentSuccessTitle",
+    "issueCommentSuccessMsg",
+    "issueCommentFailedMsg"
+  ]
+}

@@ -156,6 +156,8 @@ const scheduledSyncSetDebounceReference = "scheduled_sync_set";
 const dismissErrorDebounceReference = "dismiss_error";
 const refreshDebounceReference = "refresh";
 
+const maestroE2eErrorMarker = "MAESTROE2E";
+
 const scheduledSyncKey = "scheduled_sync_";
 const networkRetrySyncKey = "network_retry_sync_";
 

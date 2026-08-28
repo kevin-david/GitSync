@@ -5,6 +5,7 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:GitSync/api/manager/auth/github_app_manager.dart';
 import 'package:GitSync/api/manager/settings_manager.dart';
+import 'package:GitSync/api/scheduled_sync_coordinator.dart';
 import 'package:GitSync/ui/component/button_setting.dart';
 import 'package:GitSync/ui/component/custom_showcase.dart';
 import 'package:GitSync/ui/component/group_sync_settings.dart';
@@ -181,7 +182,7 @@ Future<void> backgroundCallback(Uri? data) async {
       if (Platform.isIOS) {
         await gitSyncService.debouncedSync(repoIndex, true, true);
       } else {
-        FlutterBackgroundService().invoke(GitsyncService.FORCE_SYNC, {REPO_INDEX: "$repoIndex"});
+        await gitSyncService.debouncedSync(repoIndex, true, true, null);
       }
       return;
     }
@@ -198,7 +199,7 @@ Future<void> backgroundCallback(Uri? data) async {
       if (Platform.isIOS) {
         await gitSyncService.debouncedSync(repoIndex, true, true);
       } else {
-        FlutterBackgroundService().invoke(GitsyncService.FORCE_SYNC, {REPO_INDEX: "$repoIndex"});
+        await gitSyncService.debouncedSync(repoIndex, true, true, null);
       }
       return;
     }
@@ -244,7 +245,9 @@ void callbackDispatcher() async {
         if (Platform.isIOS) {
           await gitSyncService.debouncedSync(repoIndex, true, true);
         } else {
-          await _ensureServiceInvoke(GitsyncService.FORCE_SYNC, {REPO_INDEX: "$repoIndex"});
+          // WorkManager owns the scoped wake lock while the service isolate
+          // runs the Git operation and reports completion.
+          await ScheduledSyncCoordinator(_FlutterScheduledSyncService()).run(repoIndex: repoIndex);
         }
 
         return Future.value(true);
@@ -255,6 +258,19 @@ void callbackDispatcher() async {
       return Future.error(e);
     }
   });
+}
+
+class _FlutterScheduledSyncService implements ScheduledSyncService {
+  final FlutterBackgroundService _service = FlutterBackgroundService();
+
+  @override
+  Future<bool> start() => _service.startService();
+
+  @override
+  Stream<Map<String, dynamic>?> on(String method) => _service.on(method);
+
+  @override
+  void invoke(String method, [Map<String, dynamic>? args]) => _service.invoke(method, args);
 }
 
 Future<void> _ensureServiceInvoke(String event, [dynamic data]) async {
@@ -304,6 +320,26 @@ void onServiceStart(ServiceInstance service) async {
   // Required in the background isolate so HomeWidget.saveWidgetData from
   // within _sync() writes to the correct SharedPreferences group.
   await HomeWidget.setAppGroupId('group.ForceSyncWidget');
+
+  service.on(ScheduledSyncCoordinator.pingEvent).listen((event) {
+    final requestId = event?['requestId'];
+    if (requestId != null) {
+      service.invoke(ScheduledSyncCoordinator.readyEvent, {'requestId': requestId});
+    }
+  });
+
+  service.on(ScheduledSyncCoordinator.syncEvent).listen((event) async {
+    final requestId = event?['requestId'];
+    if (requestId == null) return;
+
+    try {
+      final repoIndex = event?['repoIndex'] as int? ?? await repoManager.getInt(StorageKey.repoman_repoIndex);
+      await gitSyncService.runScheduledSync(repoIndex);
+      service.invoke(ScheduledSyncCoordinator.completeEvent, {'requestId': requestId, 'success': true});
+    } catch (error) {
+      service.invoke(ScheduledSyncCoordinator.completeEvent, {'requestId': requestId, 'success': false, 'error': error.toString()});
+    }
+  });
 
   _onGitOp(service, LogType.Clone, (event) async {
     if (event == null) return null;
@@ -1940,7 +1976,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with WidgetsBindingObse
                   style: ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
                   constraints: BoxConstraints(),
                   onPressed: () => _restorableGlobalSettings.present({}),
-                  icon: FaIcon(FontAwesomeIcons.gear, color: colours.tertiaryDark, size: spaceMD + 7),
+                  icon: FaIcon(FontAwesomeIcons.gear, color: colours.tertiaryDark, size: spaceMD + 7, semanticLabel: t.globalSettings),
                 ),
               ),
               SizedBox(width: spaceSM),

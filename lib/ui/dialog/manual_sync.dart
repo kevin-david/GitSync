@@ -34,6 +34,7 @@ Future<bool> showDialog(BuildContext context, {bool? hasRemotes}) async {
   final diffCache = <String, Future<Map<String, dynamic>?>>{};
 
   final clientModeEnabled = await uiSettingsManager.getClientModeEnabled();
+  final syncMessage = await uiSettingsManager.getSyncMessage();
   final editorLineWrap = await repoManager.getBool(StorageKey.repoman_editorLineWrap);
   final bool resolvedHasRemotes =
       hasRemotes ??
@@ -224,7 +225,7 @@ Future<bool> showDialog(BuildContext context, {bool? hasRemotes}) async {
                                       fillColor: colours.secondaryDark,
                                       filled: true,
                                       border: const OutlineInputBorder(borderRadius: BorderRadius.all(cornerRadiusSM), borderSide: BorderSide.none),
-                                      hintText: defaultSyncMessage,
+                                      hintText: syncMessage,
                                       isCollapsed: true,
                                       label: Text(
                                         t.commitMessage.toUpperCase(),

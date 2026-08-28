@@ -76,12 +76,16 @@ class GitProviderManager {
     if (accessToken.isEmpty) return null;
 
     final client = oauthClient;
-    final refreshed = await client.refreshToken(refreshToken, clientId: clientId, clientSecret: clientSecret);
+    try {
+      final refreshed = await client.refreshToken(refreshToken, clientId: clientId, clientSecret: clientSecret);
 
-    if (refreshed.accessToken != null) {
-      if (refreshed.accessToken == null || refreshed.refreshToken == null) return null;
-      await setAccessRefreshToken(refreshed.accessToken!, refreshed.expirationDate, refreshed.refreshToken!);
-      return refreshed.accessToken;
+      if (refreshed.accessToken != null) {
+        if (refreshed.accessToken == null || refreshed.refreshToken == null) return null;
+        await setAccessRefreshToken(refreshed.accessToken!, refreshed.expirationDate, refreshed.refreshToken!);
+        return refreshed.accessToken;
+      }
+    } on FormatException {
+      return accessToken;
     }
     return null;
   }

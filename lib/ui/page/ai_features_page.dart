@@ -502,16 +502,16 @@ class _AiFeaturesPageState extends ConsumerState<AiFeaturesPage> {
   }
 
   String _summarizeToolInput(String toolName, Map<String, dynamic> input) {
-    if (input.containsKey('paths')) return (input['paths'] as List).join(', ');
-    if (input.containsKey('path')) return input['path'] as String;
-    if (input.containsKey('file_path')) return input['file_path'] as String;
-    if (input.containsKey('name')) return input['name'] as String;
-    if (input.containsKey('commit_sha')) return input['commit_sha'] as String;
-    if (input.containsKey('message')) {
+    if (input['paths'] is List) return (input['paths'] as List).join(', ');
+    if (input['path'] is String) return input['path'] as String;
+    if (input['file_path'] is String) return input['file_path'] as String;
+    if (input['name'] is String) return input['name'] as String;
+    if (input['commit_sha'] is String) return input['commit_sha'] as String;
+    if (input['message'] is String) {
       final msg = input['message'] as String;
       return msg.length > 50 ? '${msg.substring(0, 50)}...' : msg;
     }
-    if (input.containsKey('pattern')) return input['pattern'] as String;
+    if (input['pattern'] is String) return input['pattern'] as String;
     return '';
   }
 
