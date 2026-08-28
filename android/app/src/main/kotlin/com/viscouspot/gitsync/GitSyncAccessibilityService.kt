@@ -21,9 +21,17 @@ class GitSyncAccessibilityService: AccessibilityService() {
         event?.let {
             when (it.eventType) {
                 AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED -> {
+                    val eventPackageName = event.packageName?.toString() ?: ""
+                    val applicationLabel = try {
+                        val applicationInfo = packageManager.getApplicationInfo(eventPackageName, 0)
+                        packageManager.getApplicationLabel(applicationInfo).toString()
+                    } catch (_: Exception) {
+                        eventPackageName
+                    }
                     val accessibilityEventIntent = Intent(this, id.flutter.flutter_background_service.BackgroundService::class.java)
                     accessibilityEventIntent.action = "ACCESSIBILITY_EVENT"
-                    accessibilityEventIntent.putExtra("packageName", (event.packageName?.toString() ?: ""))
+                    accessibilityEventIntent.putExtra("packageName", eventPackageName)
+                    accessibilityEventIntent.putExtra("applicationLabel", applicationLabel)
                     accessibilityEventIntent.putExtra("enabledInputMethods", enabledInputMethods.joinToString(","))
                     startService(accessibilityEventIntent)
                 }
